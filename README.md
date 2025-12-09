@@ -1,36 +1,70 @@
-# AI-on-the-edge-device Web Installer
+# ESP Web Tools
 
-## Cấu trúc file
+Allow flashing ESPHome or other ESP-based firmwares via the browser. Will automatically detect the board type and select a supported firmware. [See website for full documentation.](https://esphome.github.io/esp-web-tools/)
 
-1. **index.html** - Trang web cài đặt chính
-2. **manifest.json** - File cấu hình cho ESP Web Tools
-3. **console.html** - Trang console USB
-4. **firmware/** - Thư mục chứa các file firmware
+```html
+<esp-web-install-button
+  manifest="firmware_esphome/manifest.json"
+></esp-web-install-button>
+```
 
-## Cách sử dụng
+Example manifest:
 
-### Cài đặt firmware:
-1. Mở `index.html` trong trình duyệt (Chrome/Edge/Firefox)
-2. Kết nối ESP32 qua USB
-3. Chuyển ESP32 sang chế độ bootloader:
-   - Nhấn giữ nút FLASH + nhấn nút RESET
-   - Hoặc kéo GPIO0 xuống LOW
-4. Nhấn nút "Connect" và chọn thiết bị ESP32
-5. Nhấn "Install" để cài đặt firmware
+```json
+{
+  "name": "ESPHome",
+  "version": "2021.10.3",
+  "home_assistant_domain": "esphome",
+  "funding_url": "https://esphome.io/guides/supporters.html",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "bootloader_dout_40m.bin", "offset": 4096 },
+        { "path": "partitions.bin", "offset": 32768 },
+        { "path": "boot_app0.bin", "offset": 57344 },
+        { "path": "esp32.bin", "offset": 65536 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32-C3",
+      "parts": [
+        { "path": "bootloader_dout_40m.bin", "offset": 0 },
+        { "path": "partitions.bin", "offset": 32768 },
+        { "path": "boot_app0.bin", "offset": 57344 },
+        { "path": "esp32-c3.bin", "offset": 65536 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32-S2",
+      "parts": [
+        { "path": "bootloader_dout_40m.bin", "offset": 4096 },
+        { "path": "partitions.bin", "offset": 32768 },
+        { "path": "boot_app0.bin", "offset": 57344 },
+        { "path": "esp32-s2.bin", "offset": 65536 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "bootloader_dout_40m.bin", "offset": 4096 },
+        { "path": "partitions.bin", "offset": 32768 },
+        { "path": "boot_app0.bin", "offset": 57344 },
+        { "path": "esp32-s3.bin", "offset": 65536 }
+      ]
+    },
+    {
+      "chipFamily": "ESP8266",
+      "parts": [
+        { "path": "esp8266.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
+```
 
-### Sử dụng USB Console:
-1. Nhấn "Open USB Console" từ trang chính
-2. Nhấn "Connect" và chọn thiết bị ESP32
-3. Gõ lệnh và nhấn Enter để gửi
+## Development
 
-## Yêu cầu
+Run `script/develop`. This starts a server. Open it on http://localhost:5001.
 
-- Trình duyệt hỗ trợ Web Serial API (Chrome 89+, Edge 89+, Firefox không hỗ trợ đầy đủ)
-- Kết nối HTTPS hoặc localhost
-- File firmware đúng phiên bản
-
-## Lưu ý
-
-- Luôn backup dữ liệu trước khi cài đặt
-- Đảm bảo ESP32 ở chế độ bootloader
-- SD card cần được format FAT32
+[![ESPHome - A project from the Open Home Foundation](https://www.openhomefoundation.org/badges/esphome.png)](https://www.openhomefoundation.org/)
