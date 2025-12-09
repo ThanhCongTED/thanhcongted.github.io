@@ -2,37 +2,23 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>ESP Web Tools</title>
+    <title>Công Cụ Web cho Thiết Bị AI-on-the-edge</title>
     <meta
       name="description"
-      content="Easily allow users to flash new firmware for their ESP-devices on the web."
+      content="Cung cấp trình cài đặt web và giao diện console trực tiếp cho thiết bị AI-on-the-edge-device."
     />
     <meta name="viewport" content="width=device-width" />
 
-    <meta property="og:title" content="ESP Web Tools" />
-    <meta property="og:site_name" content="ESP Web Tools" />
+    <meta property="og:title" content="Công Cụ Web cho Thiết Bị AI-on-the-edge" />
+    <meta property="og:site_name" content="AI-on-the-edge-device" />
     <meta
       property="og:url"
-      content="https://esphome.github.io/esp-web-tools/"
+      content="https://github.com/jomjol/AI-on-the-edge-device"
     />
     <meta property="og:type" content="website" />
     <meta
       property="og:description"
-      content="Easily allow users to flash new firmware for their ESP-devices on the web."
-    />
-    <meta
-      property="og:image"
-      content="https://esphome.github.io/esp-web-tools/static/social.png"
-    />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ESP Web Tools" />
-    <meta
-      name="twitter:description"
-      content="Easily allow users to flash new firmware for their ESP-devices on the web."
-    />
-    <meta
-      name="twitter:image"
-      content="https://esphome.github.io/esp-web-tools/static/social.png"
+      content="Cung cấp trình cài đặt web và giao diện console trực tiếp cho thiết bị AI-on-the-edge-device."
     />
     <meta name="color-scheme" content="dark light" />
     <style>
@@ -55,55 +41,11 @@
       h3 {
         margin-top: 1.5em;
       }
-      .projects {
-        display: flex;
-        text-align: center;
-        flex-wrap: wrap;
-        gap: 24px;
-        justify-content: center;
-      }
-      .projects a {
-        color: initial;
-        text-decoration: none;
-      }
-      .project .logo img {
-        height: 50px;
-      }
-      .project .name {
-        margin-top: 8px;
-      }
       a {
         color: #03a9f4;
       }
-      .screenshot {
-        text-align: center;
-      }
-      .screenshot img {
-        max-width: 100%;
-        box-shadow:
-          rgb(0 0 0 / 20%) 0px 2px 1px -1px,
-          rgb(0 0 0 / 14%) 0px 1px 1px 0px,
-          rgb(0 0 0 / 12%) 0px 1px 3px 0px;
-        border-radius: 4px;
-      }
-      .screenshot i {
-        margin-top: 4px;
-        display: block;
-      }
-      .videoWrapper {
-        position: relative;
-        padding-bottom: 56.25%; /* 16:9 */
-        height: 0;
-        margin-bottom: 25px;
-        background: #ccc;
-      }
       .hidden {
         display: none;
-      }
-      .content pre {
-        display: block;
-        padding-left: 8px;
-        overflow-y: scroll;
       }
       .footer {
         margin-top: 24px;
@@ -111,16 +53,26 @@
         padding-top: 24px;
         text-align: center;
       }
-      .footer .initiative {
-        font-style: italic;
-        margin-top: 16px;
+      .note-box {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 4px;
+        padding: 12px;
+        margin: 16px 0;
       }
-      table {
-        border-spacing: 0;
+      .warning-box {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 12px;
+        margin: 16px 0;
       }
-      td {
-        padding: 8px;
-        border-bottom: 1px solid #ccc;
+      .license-box {
+        background-color: #e8f4fd;
+        border: 1px solid #b6e0fe;
+        border-radius: 4px;
+        padding: 12px;
+        margin: 16px 0;
       }
       @media (prefers-color-scheme: dark) {
         body {
@@ -130,12 +82,20 @@
         a {
           color: #58a6ff;
         }
+        .note-box {
+          background-color: #332b00;
+          border-color: #665800;
+        }
+        .warning-box {
+          background-color: #331a1c;
+          border-color: #663438;
+        }
+        .license-box {
+          background-color: #002733;
+          border-color: #004e66;
+        }
       }
     </style>
-    <script
-      type="module"
-      src="https://unpkg.com/@justinribeiro/lite-youtube@1.4.0/lite-youtube.js"
-    ></script>
     <script
       type="module"
       src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"
@@ -143,26 +103,45 @@
   </head>
   <body>
     <div class="content">
-      <h1>ESP Web Tools</h1>
+      <h1>Công Cụ Web cho Thiết Bị AI-on-the-edge</h1>
       <p>
-        User friendly tools to manage ESP8266 and ESP32 devices in the browser:
+        Trang này cung cấp trình cài đặt web và giao diện console trực tiếp cho thiết bị AI-on-the-edge-device của bạn.
+        Để biết thêm thông tin về AI-on-the-edge-device, vui lòng truy cập <a href="https://github.com/jomjol/AI-on-the-edge-device">https://github.com/jomjol/AI-on-the-edge-device</a>.
       </p>
-      <ul>
-        <li>Install &amp; update firmware</li>
-        <li>Connect device to the Wi-Fi network</li>
-        <li>Visit the device's hosted web interface</li>
-        <li>Access logs and send terminal commands</li>
-        <li>
-          Add devices to
-          <a href="https://www.home-assistant.io">Home Assistant</a>
-        </li>
-      </ul>
 
-        <esp-web-install-button
+      <div class="note-box">
+        <h3>Lưu ý quan trọng:</h3>
+        <ul>
+          <li>Webinstall sẽ cài đặt firmware mới nhất (Phiên bản v16.0.0).</li>
+          <li>Để cài đặt, hãy đảm bảo chuyển ESP32 sang chế độ Bootloader bằng cách giữ nút FLASH trong khi nhả nút RESET. Nếu không có nút FLASH, bạn cần kéo chân GPIO0 xuống mức thấp!</li>
+          <li>Sau khi cài đặt, có thể cần reset thủ công!</li>
+          <li>Xin lưu ý rằng không phải tất cả trình duyệt web và hệ điều hành đều hỗ trợ quyền truy cập USB cần thiết cho trình cài đặt web này!</li>
+          <li>Kiểm tra tài liệu để biết thêm thông tin.</li>
+        </ul>
+      </div>
+
+      <div class="warning-box">
+        <h3>Cấu hình thẻ SD:</h3>
+        <p>Thẻ SD có thể được thiết lập tự động sau khi cài đặt firmware. Xem tài liệu để biết chi tiết. Để tính năng này hoạt động, thẻ SD phải được định dạng FAT (đây là định dạng mặc định trên thẻ SD mới). Ngoài ra, thẻ SD vẫn có thể được thiết lập thủ công, xem tài liệu để biết chi tiết!</p>
+      </div>
+
+      <h2>Trình Cài Đặt Firmware</h2>
+      <esp-web-install-button
         manifest="manifest.json"
-        ></esp-web-install-button>
-        
+      ></esp-web-install-button>
+
+      <h2>Console Trực Tiếp</h2>
+      <p>Kết nối với thiết bị của bạn thông qua cổng nối tiếp USB:</p>
+      <button id="connect-button" style="padding: 10px 20px; margin-bottom: 20px;">Kết nối Console</button>
+      <div id="console-output" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; background: #000; color: #0f0; font-family: monospace; display: none;"></div>
+
+      <div class="license-box">
+        <h3>Giấy phép:</h3>
+        <p>Dự án này được xuất bản dưới giấy phép cá nhân: <a href="#">License</a></p>
+        <p>Bằng cách sử dụng trình cài đặt web này, bạn đồng ý với giấy phép này. Đặc biệt, cần có thỏa thuận riêng với tác giả để sử dụng AI-on-the-Edge cho mục đích thương mại.</p>
+      </div>
     </div>
+
     <script>
       {
         if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
@@ -174,6 +153,69 @@
           const button = document.querySelector("esp-web-install-button");
           button.manifest = search.get("manifest");
         }
+
+        // Console functionality
+        let port;
+        let reader;
+        const connectButton = document.getElementById('connect-button');
+        const consoleOutput = document.getElementById('console-output');
+        
+        connectButton.addEventListener('click', async () => {
+          if (!('serial' in navigator)) {
+            alert('Trình duyệt của bạn không hỗ trợ Serial API. Vui lòng sử dụng Chrome/Edge 89+ hoặc Opera 76+');
+            return;
+          }
+          
+          try {
+            port = await navigator.serial.requestPort();
+            await port.open({ baudRate: 115200 });
+            
+            consoleOutput.style.display = 'block';
+            connectButton.textContent = 'Ngắt kết nối';
+            
+            // Read data from serial port
+            reader = port.readable.getReader();
+            while (true) {
+              const { value, done } = await reader.read();
+              if (done) {
+                reader.releaseLock();
+                break;
+              }
+              const text = new TextDecoder().decode(value);
+              consoleOutput.innerHTML += text;
+              consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            }
+          } catch (err) {
+            console.error('Lỗi:', err);
+            if (err.name === 'NotFoundError') {
+              alert('Không tìm thấy thiết bị serial.');
+            }
+          }
+        });
+
+        // Disconnect function
+        const disconnectSerial = async () => {
+          if (reader) {
+            await reader.cancel();
+            reader.releaseLock();
+            reader = null;
+          }
+          if (port) {
+            await port.close();
+            port = null;
+          }
+          consoleOutput.style.display = 'none';
+          connectButton.textContent = 'Kết nối Console';
+        };
+
+        // Update disconnect logic
+        connectButton.addEventListener('click', async () => {
+          if (port && port.readable) {
+            await disconnectSerial();
+          } else {
+            await connectSerial();
+          }
+        });
       }
     </script>
   </body>
