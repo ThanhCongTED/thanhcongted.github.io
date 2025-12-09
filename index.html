@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cấu Hình Thông Tin Khách Hàng</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        h1 {
+            color: var(--dark);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 16px;
+        }
+        
+        .notification {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .notification.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid var(--success);
+        }
+        
+        .notification.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid var(--danger);
+        }
+        
+        .notification.warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            color: var(--dark);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .period-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .period-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .period-btn.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        
+        .period-btn:hover:not(.active) {
+            border-color: var(--primary);
+            background: #e7f3ff;
+        }
+        
+        .price-display {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #e7f3ff;
+            border-radius: 8px;
+        }
+        
+        .bank-info {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .bank-info h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .bank-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .bank-item {
+            margin-bottom: 8px;
+        }
+        
+        .bank-label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .bank-value {
+            color: #2c3e50;
+        }
+        
+        .qr-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 25px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border: 1px dashed #ddd;
+        }
+        
+        .qr-container {
+            display: inline-block;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+        
+        .qr-message {
+            margin-top: 15px;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .qr-content {
+            font-weight: 600;
+            color: var(--primary);
+            background: #e7f3ff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        .instruction {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid var(--warning);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .bank-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .period-selector {
+                flex-direction: column;
+            }
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cấu Hình Thông Tin Khách Hàng</h1>
+            <p class="subtitle">Nhập thông tin khách hàng và tạo mã QR thanh toán</p>
+        </header>
+        
+        <div id="notification" class="notification"></div>
+        
+        <div class="form-section">
+            <h2 class="section-title">Thông Tin Khách Hàng</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="iduser">ID Khách Hàng:<em>(Ghi theo hóa đơn của bạn)</em></label>
+                    <input type="text" id="iduser" placeholder="VD: TP123456789">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phoneuser">Số Điện Thoại Khách Hàng:</label>
+                    <input type="text" id="phoneuser" placeholder="VD: 0915898345">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phonename">Số Điện Thoại Người Ghi Chỉ Số Nước:</label>
+                    <input type="text" id="phonename" placeholder="VD: 0925898345">
+                </div>
+                
+                <div class="form-group">
+                    <label for="checkDate">Ngày Chốt Đồng Hồ:</label>
+                    <select id="checkDate">
+                        <option value="1">Ngày 1</option>
+                        <option value="2">Ngày 2</option>
+                        <option value="3">Ngày 3</option>
+                        <option value="4">Ngày 4</option>
+                        <option value="5">Ngày 5</option>
+                        <option value="6">Ngày 6</option>
+                        <option value="7">Ngày 7</option>
+                        <option value="8">Ngày 8</option>
+                        <option value="9">Ngày 9</option>
+                        <option value="10">Ngày 10</option>
+                        <option value="11">Ngày 11</option>
+                        <option value="12">Ngày 12</option>
+                        <option value="13">Ngày 13</option>
+                        <option value="14">Ngày 14</option>
+                        <option value="15">Ngày 15</option>
+                        <option value="16">Ngày 16</option>
+                        <option value="17">Ngày 17</option>
+                        <option value="18">Ngày 18</option>
+                        <option value="19">Ngày 19</option>
+                        <option value="20">Ngày 20</option>
+                        <option value="21">Ngày 21</option>
+                        <option value="22">Ngày 22</option>
+                        <option value="23">Ngày 23</option>
+                        <option value="24">Ngày 24</option>
+                        <option value="25">Ngày 25</option>
+                        <option value="26">Ngày 26</option>
+                        <option value="27">Ngày 27</option>
+                        <option value="28">Ngày 28</option>
+                        <option value="29">Ngày 29</option>
+                        <option value="30">Ngày 30</option>
+                        <option value="31">Ngày 31</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Tiền Thanh Toán: <span class="price-display" id="priceDisplay">- VND</span></label>
+                    <div class="period-selector">
+                        <div class="period-btn active" data-period="1">Mua 6 Tháng</div>
+                        <div class="period-btn" data-period="2">Mua 1 Năm</div>
+                        <div class="period-btn" data-period="3">Mua 2 Năm</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="saveAndGenerateQR()">
+                    <span>💾</span> Lưu 
+                </button>
+            </div>
+        </div>
+        
+        <div class="bank-info">
+            <h3><span>🏦</span> Thông Tin Ngân Hàng</h3>
+            <div class="bank-details">
+                <div class="bank-item">
+                    <span class="bank-label">Ngân hàng:</span>
+                    <span class="bank-value">MBBank</span>
+                </div>
+                <div class="bank-item">
+                    <span class="bank-label">Số tài khoản:</span>
+                    <span class="bank-value">VQRQAFEUO7939 </span>
+                </div>
+                <div class="bank-item">
+                    <span class="bank-label">Chủ tài khoản:</span>
+                    <span class="bank-value">Vũ Văn Công</span>
+                </div>
+                <div class="bank-item">
+                    <span class="bank-label">Nội dung CK:</span>
+                    <span class="bank-value" id="contentDisplay">-</span>
+                </div>
+                <div class="bank-item full-width">
+                    <span class="bank-label">Số tiền:</span>
+                    <span class="bank-value" id="amountDisplay">-</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Đang tạo mã QR...</p>
+        </div>
+        
+        <div class="qr-section">
+            <h3><span>📱</span> Mã QR Thanh Toán</h3>
+            <div class="qr-container">
+                <div id="qrcode">
+                    <div class="qr-placeholder">
+                        Hãy quét mã QR để thanh toán
+                    </div>
+                </div>
+            </div>
+        
+            <div class="instruction">
+                <strong>Chú Ý:</strong> Sau khi chuyển khoản thành công bạn đợi 5 phút hệ thống tự cập nhật. 
+                Sau đó bạn cần khởi động lại thiết bị. Mọi thắc mắc vui lòng liên hệ: 0915898345
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 - Hệ thống quản lý khách hàng. <a href="https://thanhcongted.com" target="_blank">Thanhcongted.com</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Thông tin ngân hàng cố định
+        const BANK_ACCOUNT = "VQRQAFEUO7939";
+        const BANK_NAME = "Vũ Văn Công";
+        const BANK_CODE = "MB";
+        
+        // Biến để lưu URL QR code hiện tại
+        let currentQRUrl = '';
+        let selectedPeriod = 1;
+        let selectedPrice = 0;
+        let selectedCheckDate = "1";
+
+        // Khởi tạo khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCustomerData();
+            setupPeriodSelector();
+            setupCheckDateListener();
+        });
+
+        // Hàm lấy dữ liệu khách hàng từ backend
+        async function loadCustomerData() {
+            try {
+                const response = await fetch('/get-customer-data');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                
+                // Cập nhật form với dữ liệu từ backend
+                document.getElementById('iduser').value = data.iduser || 'TP123456789';
+                document.getElementById('phoneuser').value = data.phoneuser || '0915898345';
+                document.getElementById('phonename').value = data.phonename || '0925898345';
+                document.getElementById('checkDate').value = data.checkDate || '1';
+                selectedCheckDate = data.checkDate || '1';
+                
+                // Đọc giá trị period từ file và cập nhật giao diện
+                if (data.period1 && data.period2 && data.period3) {
+                    updatePeriodPrices(data.period1, data.period2, data.period3);
+                    
+                    // Đặt giá trị mặc định từ period1
+                    selectedPrice = parseInt(data.period1);
+                    
+                    // Cập nhật hiển thị giá
+                    document.getElementById('priceDisplay').textContent = formatCurrency(selectedPrice) + ' VND' ;
+                    document.getElementById('amountDisplay').textContent = formatCurrency(selectedPrice) + ' VND';
+                } else {
+                    showNotification('⚠️ Không tìm thấy giá trị period trong file', 'warning');
+                }
+                
+                // Tạo QR code sau khi load dữ liệu
+                generateQRCode();
+                
+            } catch (error) {
+                console.error('Error loading customer data:', error);
+                showNotification('⚠️ Không thể tải dữ liệu từ hệ thống', 'warning');
+            }
+        }
+
+        // Hàm cập nhật giá trị cho các nút period
+        function updatePeriodPrices(period1, period2, period3) {
+            const periodButtons = document.querySelectorAll('.period-btn');
+            periodButtons.forEach(button => {
+                const period = button.getAttribute('data-period');
+                let price = 0;
+                
+                if (period === '1') price = parseInt(period1);
+                else if (period === '2') price = parseInt(period2);
+                else if (period === '3') price = parseInt(period3);
+                
+                button.setAttribute('data-price', price);
+                
+                // Cập nhật text hiển thị
+                //button.textContent = `${period} Năm (${formatCurrency(price)} VND)`;
+            });
+        }
+
+        // Hàm lưu dữ liệu lên backend - Lưu 4 trường: iduser, phoneuser, phonename, checkDate
+        async function saveCustomerData() {
+            const iduser = document.getElementById('iduser').value;
+            const phoneuser = document.getElementById('phoneuser').value;
+            const phonename = document.getElementById('phonename').value;
+            const checkDate = document.getElementById('checkDate').value;
+            
+            if (!iduser) {
+                showNotification('⚠️ Vui lòng nhập ID khách hàng trước!', 'warning');
+                return false;
+            }
+            
+            try {
+                // Tạo URL với các tham số - gửi 4 trường cần lưu
+                const params = new URLSearchParams({
+                    iduser: iduser,
+                    phoneuser: phoneuser,
+                    phonename: phonename,
+                    checkDate: checkDate
+                });
+                
+                const response = await fetch(`/save-config?${params}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('✅ Đã lưu thông tin thành công!');
+                    return true;
+                } else {
+                    showNotification('❌ Lỗi khi lưu thông tin: ' + result.message, 'error');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error saving customer data:', error);
+                showNotification('❌ Lỗi kết nối khi lưu thông tin', 'error');
+                return false;
+            }
+        }
+
+        function setupPeriodSelector() {
+            const periodButtons = document.querySelectorAll('.period-btn');
+            
+            periodButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Xóa active class từ tất cả các nút
+                    periodButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Thêm active class cho nút được chọn
+                    this.classList.add('active');
+                    
+                    // Cập nhật giá trị
+                    selectedPeriod = parseInt(this.getAttribute('data-period'));
+                    selectedPrice = parseInt(this.getAttribute('data-price'));
+                    
+                    // Cập nhật hiển thị giá
+                    document.getElementById('priceDisplay').textContent = formatCurrency(selectedPrice) + ' VND';
+                    document.getElementById('amountDisplay').textContent = formatCurrency(selectedPrice) + ' VND';
+                    
+                    // Tạo lại QR code với số tiền mới
+                    generateQRCode();
+                });
+            });
+        }
+
+        function setupCheckDateListener() {
+            const checkDateSelect = document.getElementById('checkDate');
+            if (checkDateSelect) {
+                checkDateSelect.addEventListener('change', function() {
+                    selectedCheckDate = this.value;
+                    generateQRCode();
+                });
+            }
+        }
+
+        function formatCurrency(amount) {
+            return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        async function saveAndGenerateQR() {
+            const saved = await saveCustomerData();
+            if (saved) {
+                generateQRCode();
+            }
+        }
+
+        function generateQRCode() {
+            const iduser = document.getElementById('iduser').value;
+            const contentDisplay = document.getElementById('contentDisplay');
+            const amountDisplay = document.getElementById('amountDisplay');
+            
+            if (!iduser) {
+                showNotification('⚠️ Vui lòng nhập ID khách hàng trước!', 'warning');
+                return;
+            }
+            
+            if (selectedPrice === 0) {
+                showNotification('⚠️ Chưa có giá trị tiền để tạo mã QR', 'warning');
+                return;
+            }
+            
+            // Kiểm tra các phần tử có tồn tại không
+            if (!contentDisplay || !amountDisplay) {
+                console.error('Không tìm thấy phần tử hiển thị');
+                return;
+            }
+            
+            // Tạo nội dung chuyển khoản với định dạng: ID_SỐNĂM
+            const transferContent = `ThanhCong_${iduser}_${selectedPeriod}_TED`;
+            
+            // Cập nhật nội dung hiển thị
+            contentDisplay.textContent = transferContent;
+            amountDisplay.textContent = formatCurrency(selectedPrice) + ' VND';
+            
+            // Tạo URL ảnh QR từ SePay
+            currentQRUrl = `https://qr.sepay.vn/img?acc=${BANK_ACCOUNT}&bank=${BANK_CODE}&amount=${selectedPrice}&des=${encodeURIComponent(transferContent)}`;
+
+            // Xóa mã QR cũ
+            const qrcodeElement = document.getElementById('qrcode');
+            if (qrcodeElement) {
+                qrcodeElement.innerHTML = '';
+                
+                // Tạo thẻ img với URL từ SePay
+                const img = document.createElement('img');
+                img.src = currentQRUrl;
+                img.alt = 'Mã QR thanh toán';
+                img.style.width = '200px';
+                img.style.height = '200px';
+                img.style.borderRadius = '8px';
+                
+                // Hiển thị loading
+                const loadingElement = document.getElementById('loading');
+                if (loadingElement) {
+                    loadingElement.style.display = 'block';
+                }
+                
+                // Xử lý khi ảnh tải thành công
+                img.onload = function() {
+                    if (loadingElement) {
+                        loadingElement.style.display = 'none';
+                    }
+                    showNotification('✅ Đã tạo mã QR thành công!');
+                };
+                
+                // Xử lý khi có lỗi tải ảnh
+                img.onerror = function() {
+                    if (loadingElement) {
+                        loadingElement.style.display = 'none';
+                    }
+                    console.error('Failed to load QR image from SePay');
+                    showNotification('❌ Lỗi khi tải mã QR từ SePay!', 'error');
+                    qrcodeElement.innerHTML = '<div class="qr-placeholder">Không thể tải mã QR</div>';
+                };
+                
+                qrcodeElement.appendChild(img);
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            if (!notification) return;
+            
+            notification.textContent = message;
+            notification.className = 'notification ' + type;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 4000);
+        }
+
+        // Tự động tạo mã QR khi thay đổi ID
+        document.getElementById('iduser').addEventListener('input', function() {
+            // Cập nhật nội dung hiển thị ngay lập tức
+            const contentDisplay = document.getElementById('contentDisplay');
+            
+            // Tạo nội dung chuyển khoản với định dạng: ID_SỐNĂM
+            const transferContent = `${this.value}_${selectedPeriod}`;
+            
+            if (contentDisplay) contentDisplay.textContent = transferContent;
+            
+            // Tạo mã QR mới sau 1 giây (debounce)
+            clearTimeout(window.qrTimeout);
+            window.qrTimeout = setTimeout(generateQRCode, 1000);
+        });
+    </script>
+</body>
+</html>
