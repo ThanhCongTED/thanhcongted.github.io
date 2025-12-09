@@ -1,642 +1,213 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Squeezelite-ESP32 Web Flasher</title>
-    <meta name="description" content="Web-based firmware installer for Squeezelite-ESP32 devices">
-    <meta name="color-scheme" content="dark light">
+    <title>AI-on-the-edge-device Web Installer</title>
+    <meta name="description" content="Webinstaller and Console for AI-on-the-edge-device">
     
-    <!-- ESP Web Tools từ CDN -->
+    <!-- ESP Web Tools -->
     <script type="module" src="https://unpkg.com/esp-web-tools@8.0.1/dist/web/install-button.js?module"></script>
     
     <style>
-        /* Reset và Base Styles */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background-color: #f5f5f5;
-            transition: all 0.3s ease;
-        }
-        
-        .dark-mode {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-        }
-        
-        /* Layout */
-        .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f5f5f5;
         }
         
-        /* Header */
         header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .dark-mode header {
-            border-bottom-color: #444;
+            border-bottom: 2px solid #007bff;
         }
         
         h1 {
-            color: #2c3e50;
+            color: #333;
             margin-bottom: 10px;
-            font-size: 2.5rem;
-        }
-        
-        .dark-mode h1 {
-            color: #64b5f6;
-        }
-        
-        .subtitle {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-        
-        .dark-mode .subtitle {
-            color: #aaa;
-        }
-        
-        /* Warning Banner */
-        .warning {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        
-        .dark-mode .warning {
-            background-color: #332701;
-            border-color: #665200;
-        }
-        
-        .warning-icon {
-            color: #f39c12;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-        
-        /* Device Selection */
-        .device-selection {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .dark-mode .device-selection {
-            background: #2d2d2d;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
         
         h2 {
-            color: #3498db;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+            color: #007bff;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
         }
         
-        .dark-mode h2 {
-            color: #64b5f6;
+        h3 {
+            color: #555;
+            margin: 20px 0 10px 0;
         }
         
-        .device-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .device-option {
-            position: relative;
-        }
-        
-        .device-radio {
-            position: absolute;
-            opacity: 0;
-        }
-        
-        .device-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 15px;
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
+        .content {
+            background: white;
+            padding: 30px;
             border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
-        .dark-mode .device-label {
-            background: #3a3a3a;
-            border-color: #555;
+        .notes, .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
         }
         
-        .device-radio:checked + .device-label {
-            border-color: #3498db;
-            background: #e3f2fd;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        .warning {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
         }
         
-        .dark-mode .device-radio:checked + .device-label {
-            border-color: #64b5f6;
-            background: #1e3a5f;
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
         }
         
-        .device-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: #7f8c8d;
+        li {
+            margin-bottom: 8px;
         }
         
-        .device-radio:checked + .device-label .device-icon {
-            color: #3498db;
-        }
-        
-        .dark-mode .device-radio:checked + .device-label .device-icon {
-            color: #64b5f6;
-        }
-        
-        /* Install Button Area */
         .install-section {
             text-align: center;
             margin: 40px 0;
             padding: 30px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .dark-mode .install-section {
-            background: #2d2d2d;
-        }
-        
-        .requirements {
             background: #f8f9fa;
-            padding: 15px;
             border-radius: 8px;
-            margin-bottom: 25px;
-            text-align: left;
         }
         
-        .dark-mode .requirements {
-            background: #3a3a3a;
+        .btn-connect {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 10px;
         }
         
-        .requirements ul {
-            list-style-position: inside;
-            padding-left: 10px;
-        }
-        
-        .requirements li {
-            margin-bottom: 8px;
+        .btn-connect:hover {
+            background: #218838;
         }
         
         esp-web-install-button {
-            --esp-tools-button-color: #3498db;
-            --esp-tools-text-color: white;
-            --esp-tools-border-radius: 8px;
-            --esp-tools-padding: 12px 24px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            margin: 20px 0;
         }
         
-        /* Instructions */
-        .instructions {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .dark-mode .instructions {
-            background: #2d2d2d;
-        }
-        
-        .steps {
-            counter-reset: step-counter;
-            margin-top: 20px;
-        }
-        
-        .step {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 25px;
-            padding-left: 40px;
-            position: relative;
-        }
-        
-        .step:before {
-            counter-increment: step-counter;
-            content: counter(step-counter);
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 28px;
-            height: 28px;
-            background: #3498db;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        
-        .dark-mode .step:before {
-            background: #64b5f6;
-        }
-        
-        /* Footer */
         footer {
             text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid #ddd;
             margin-top: 40px;
-            color: #7f8c8d;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 14px;
         }
         
-        .dark-mode footer {
-            border-top-color: #444;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
+        .firmware-info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
             margin: 20px 0;
-            flex-wrap: wrap;
+            text-align: center;
         }
         
-        .footer-links a {
-            color: #3498db;
-            text-decoration: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        
-        .dark-mode .footer-links a {
-            color: #64b5f6;
-        }
-        
-        .footer-links a:hover {
-            background-color: rgba(52, 152, 219, 0.1);
-        }
-        
-        .dark-mode .footer-links a:hover {
-            background-color: rgba(100, 181, 246, 0.1);
-        }
-        
-        /* Utility Classes */
-        .hidden {
-            display: none !important;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .device-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .device-label {
-                padding: 15px 10px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .device-selection,
-            .install-section,
-            .instructions {
-                padding: 20px 15px;
-            }
+        .version {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 1.2em;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="content">
         <header>
-            <h1>Squeezelite-ESP32 Web Flasher</h1>
-            <p class="subtitle">Easily install firmware on your Squeezelite-ESP32 devices directly from your browser</p>
+            <h1>AI-on-the-edge-device</h1>
+            <h2>Webinstaller and Console</h2>
         </header>
-
-        <div class="warning">
-            <div class="warning-icon">⚠</div>
-            <div>
-                <strong>Important:</strong> This tool will overwrite your device's existing firmware. 
-                Make sure to backup any important data before proceeding. 
-                The flashing process may take a few minutes.
-            </div>
+        
+        <p>This page provides the Webinstaller and a live USB Console to your AI-on-the-edge-device.</p>
+        <p>For further information about AI-on-the-edge-device please go to <a href="https://github.com/jomjol/AI-on-the-edge-device">GitHub Repository</a>.</p>
+        
+        <div class="firmware-info">
+            <h3>Firmware Version: <span class="version">v16.0.0</span></h3>
+            <p>The Webinstall will install the latest firmware</p>
         </div>
-
-        <section class="device-selection">
-            <h2>Select Your Device</h2>
-            <p>Choose the type of device you want to flash:</p>
-            
-            <div class="device-grid">
-                <!-- I2S Device -->
-                <div class="device-option">
-                    <input type="radio" name="device-type" id="i2s" value="i2s" class="device-radio">
-                    <label for="i2s" class="device-label">
-                        <div class="device-icon">🔊</div>
-                        <div class="device-name">I2S</div>
-                        <div class="device-description">Generic I2S audio device</div>
-                    </label>
-                </div>
-                
-                <!-- Muse Device -->
-                <div class="device-option">
-                    <input type="radio" name="device-type" id="muse" value="muse" class="device-radio">
-                    <label for="muse" class="device-label">
-                        <div class="device-icon">🎵</div>
-                        <div class="device-name">Muse</div>
-                        <div class="device-description">Muse audio player</div>
-                    </label>
-                </div>
-                
-                <!-- Muse Proto -->
-                <div class="device-option">
-                    <input type="radio" name="device-type" id="muse_proto" value="muse_proto" class="device-radio">
-                    <label for="muse_proto" class="device-label">
-                        <div class="device-icon">🔬</div>
-                        <div class="device-name">Muse Proto</div>
-                        <div class="device-description">Muse prototype version</div>
-                    </label>
-                </div>
-                
-                <!-- SqueezeAmp -->
-                <div class="device-option">
-                    <input type="radio" name="device-type" id="squeezeamp" value="squeezeamp" class="device-radio">
-                    <label for="squeezeamp" class="device-label">
-                        <div class="device-icon">⚡</div>
-                        <div class="device-name">SqueezeAmp</div>
-                        <div class="device-description">SqueezeAmp device</div>
-                    </label>
-                </div>
-            </div>
-            
-            <p class="device-hint"><small>Select a device type to enable the installer</small></p>
-        </section>
-
-        <section class="install-section hidden" id="install-section">
+        
+        <div class="install-section">
             <h2>Install Firmware</h2>
+            <esp-web-install-button 
+                id="installButton"
+                manifest="./manifest.json">
+            </esp-web-install-button>
             
-            <div class="requirements">
-                <p><strong>Before you begin:</strong></p>
-                <ul>
-                    <li>Connect your device via USB</li>
-                    <li>Make sure the device is in flashing mode (usually by holding BOOT button while connecting)</li>
-                    <li>Use Chrome/Edge or Firefox browsers</li>
-                    <li>Keep the page open during the process</li>
-                </ul>
-            </div>
-            
-            <esp-web-install-button id="install-button" class="hidden"></esp-web-install-button>
-            
-            <div id="waiting-message" class="hidden">
-                <p>Please select a device type above to enable the installer.</p>
-            </div>
-        </section>
-
-        <section class="instructions">
-            <h2>Installation Instructions</h2>
-            
-            <div class="steps">
-                <div class="step">
-                    <div class="step-content">
-                        <h3>Prepare Your Device</h3>
-                        <p>Put your ESP32 device into flashing mode. Typically this involves:</p>
-                        <ul>
-                            <li>Disconnect USB cable</li>
-                            <li>Hold the BOOT/FLASH button</li>
-                            <li>Connect USB cable while holding the button</li>
-                            <li>Release the button after connection</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-content">
-                        <h3>Select Device Type</h3>
-                        <p>Choose your device from the options above. The correct firmware will be loaded automatically.</p>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-content">
-                        <h3>Install Firmware</h3>
-                        <p>Click the "Install" button and select your ESP32 device from the browser's USB device list.</p>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-content">
-                        <h3>Wait for Completion</h3>
-                        <p>The installation process will take a few minutes. Do not disconnect the device during this time.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+            <p><a href="./console.html" class="btn-connect">Open USB Console</a></p>
+        </div>
+        
+        <div class="notes">
+            <h3>Installation Notes:</h3>
+            <ul>
+                <li>Switch ESP32 to Bootloader mode:
+                    <ul>
+                        <li>Keep <strong>FLASH</strong> button pressed while pressing <strong>RESET</strong> button</li>
+                        <li>If no FLASH button: pull <strong>GPIO0</strong> low</li>
+                    </ul>
+                </li>
+                <li>Manual reset might be required after installation</li>
+                <li>Not all web browsers support USB access (use Chrome/Edge/Firefox)</li>
+                <li>Check the documentation for additional information</li>
+            </ul>
+        </div>
+        
+        <div class="warning">
+            <h3>SD Card Setup:</h3>
+            <ul>
+                <li>SD card can be setup automatically after firmware installation</li>
+                <li>SD card must be FAT formatted (default on new SD cards)</li>
+                <li>Alternative: Manual SD card setup (see documentation)</li>
+            </ul>
+        </div>
+        
+        <h3>Licence:</h3>
+        <ul>
+            <li>Published under individual license</li>
+            <li>By using this web installer, you agree to this license</li>
+            <li>Commercial use requires separate agreement with authors</li>
+        </ul>
+        
         <footer>
-            <div class="footer-links">
-                <a href="https://github.com/sle118/squeezelite-esp32" target="_blank">Squeezelite-ESP32</a>
-                <a href="https://esphome.github.io/esp-web-tools/" target="_blank">ESP Web Tools</a>
-                <a href="https://github.com/sle118/squeezelite-esp32/issues" target="_blank">Report Issues</a>
-                <a href="#" id="theme-toggle">Toggle Dark Mode</a>
-            </div>
-            <p>© 2024 Squeezelite-ESP32 Web Flasher | Powered by ESP Web Tools</p>
+            <p>Installer and Console powered by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a></p>
+            <p>© 2024 AI-on-the-edge-device</p>
         </footer>
     </div>
-
-    <!-- Manifest files for different device types -->
-    <script id="manifest-i2s" type="application/json">
-        {
-            "name": "Squeezelite-ESP32 for I2S",
-            "version": "1.1023",
-            "home_assistant_domain": "slim_player",
-            "funding_url": "https://esphome.io/guides/supporters.html",
-            "builds": [
-                {
-                    "chipFamily": "ESP32",
-                    "parts": [
-                        { "path": "firmware/bootloader.bin", "offset": 4096 },
-                        { "path": "firmware/partition-table.bin", "offset": 32768 },
-                        { "path": "firmware/ota_data_initial.bin", "offset": 53248 },
-                        { "path": "firmware/recovery.bin", "offset": 65536 },
-                        { "path": "firmware/i2s.bin", "offset": 1376256 }
-                    ]
-                }
-            ]
-        }
-    </script>
-
-    <script id="manifest-muse" type="application/json">
-        {
-            "name": "Squeezelite-ESP32 for Muse",
-            "version": "1.1023",
-            "home_assistant_domain": "slim_player",
-            "builds": [
-                {
-                    "chipFamily": "ESP32",
-                    "parts": [
-                        { "path": "firmware/bootloader.bin", "offset": 4096 },
-                        { "path": "firmware/partition-table.bin", "offset": 32768 },
-                        { "path": "firmware/ota_data_initial.bin", "offset": 53248 },
-                        { "path": "firmware/recovery.bin", "offset": 65536 },
-                        { "path": "firmware/muse.bin", "offset": 1376256 }
-                    ]
-                }
-            ]
-        }
-    </script>
-
-    <script id="manifest-muse_proto" type="application/json">
-        {
-            "name": "Squeezelite-ESP32 for Muse Proto",
-            "version": "1.1023",
-            "builds": [
-                {
-                    "chipFamily": "ESP32",
-                    "parts": [
-                        { "path": "firmware/bootloader.bin", "offset": 4096 },
-                        { "path": "firmware/partition-table.bin", "offset": 32768 },
-                        { "path": "firmware/ota_data_initial.bin", "offset": 53248 },
-                        { "path": "firmware/recovery.bin", "offset": 65536 },
-                        { "path": "firmware/muse_proto.bin", "offset": 1376256 }
-                    ]
-                }
-            ]
-        }
-    </script>
-
-    <script id="manifest-squeezeamp" type="application/json">
-        {
-            "name": "Squeezelite-ESP32 for SqueezeAmp",
-            "version": "1.1023",
-            "builds": [
-                {
-                    "chipFamily": "ESP32",
-                    "parts": [
-                        { "path": "firmware/bootloader.bin", "offset": 4096 },
-                        { "path": "firmware/partition-table.bin", "offset": 32768 },
-                        { "path": "firmware/ota_data_initial.bin", "offset": 53248 },
-                        { "path": "firmware/recovery.bin", "offset": 65536 },
-                        { "path": "firmware/squeezeamp.bin", "offset": 1376256 }
-                    ]
-                }
-            ]
-        }
-    </script>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const deviceRadios = document.querySelectorAll('input[name="device-type"]');
-            const installButton = document.getElementById('install-button');
-            const installSection = document.getElementById('install-section');
-            const waitingMessage = document.getElementById('waiting-message');
-            const themeToggle = document.getElementById('theme-toggle');
+            const installButton = document.getElementById('installButton');
             
-            // Theme Toggle
-            themeToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.body.classList.toggle('dark-mode');
-                localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-            });
-            
-            // Check saved theme
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-            }
-            
-            // Device selection handler
-            deviceRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    if (this.checked) {
-                        const deviceType = this.value;
-                        const manifestElement = document.getElementById(`manifest-${deviceType}`);
-                        
-                        if (manifestElement) {
-                            try {
-                                const manifest = JSON.parse(manifestElement.textContent);
-                                installButton.manifest = manifest;
-                                
-                                // Show install section and button
-                                installSection.classList.remove('hidden');
-                                installButton.classList.remove('hidden');
-                                waitingMessage.classList.add('hidden');
-                            } catch (error) {
-                                console.error('Error parsing manifest:', error);
-                                alert('Error loading firmware manifest. Please try again.');
-                            }
-                        }
-                    }
-                });
-            });
-            
-            // Install button event listeners
+            // Add event listeners for installation status
             installButton.addEventListener('state-changed', (event) => {
-                const newState = event.detail;
-                console.log('Installation state:', newState);
+                const state = event.detail;
+                console.log('Installation state:', state);
                 
-                // You can add custom UI updates based on installation state
-                switch (newState) {
-                    case 'ready':
-                        console.log('Ready to install');
-                        break;
-                    case 'installing':
-                        console.log('Installation in progress...');
-                        break;
-                    case 'installed':
-                        console.log('Installation completed successfully');
-                        alert('Firmware installed successfully! Your device will now reboot.');
-                        break;
-                    case 'error':
-                        console.log('Installation failed');
-                        break;
+                if (state === 'installed') {
+                    alert('Firmware installed successfully! Please reset your device.');
+                } else if (state === 'error') {
+                    alert('Installation failed. Please check your connection and try again.');
                 }
             });
-            
-            // Initialize
-            console.log('Squeezelite-ESP32 Web Flasher initialized');
-            
-            // Auto-select first device (optional)
-            // deviceRadios[0].checked = true;
-            // deviceRadios[0].dispatchEvent(new Event('change'));
         });
     </script>
 </body>
