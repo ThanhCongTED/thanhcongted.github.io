@@ -3,960 +3,640 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web ESP Flasher - ESP32/ESP8266 Firmware Installer</title>
+    <title>Squeezelite-ESP32 Web Flasher</title>
+    <meta name="description" content="Web-based firmware installer for Squeezelite-ESP32 devices">
+    <meta name="color-scheme" content="dark light">
+    
+    <!-- ESP Web Tools từ CDN -->
+    <script type="module" src="https://unpkg.com/esp-web-tools@8.0.1/dist/web/install-button.js?module"></script>
+    
     <style>
-        :root {
-            --primary: #007bff;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --dark: #343a40;
-            --light: #f8f9fa;
-        }
-
+        /* Reset và Base Styles */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
-
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        
+        /* Layout */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
+        
+        /* Header */
         header {
             text-align: center;
-            margin-bottom: 30px;
-            color: white;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
         }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
+        
+        .dark-mode header {
+            border-bottom-color: #444;
+        }
+        
+        h1 {
+            color: #2c3e50;
             margin-bottom: 10px;
-        }
-
-        .logo h1 {
             font-size: 2.5rem;
-            font-weight: 700;
         }
-
-        .chip-icon {
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--primary);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        
+        .dark-mode h1 {
+            color: #64b5f6;
         }
-
+        
         .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
+            color: #7f8c8d;
+            font-size: 1.1rem;
         }
-
-        .main-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin-bottom: 30px;
+        
+        .dark-mode .subtitle {
+            color: #aaa;
         }
-
-        .card-header {
-            background: var(--dark);
-            color: white;
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-header h2 {
-            font-size: 1.5rem;
-        }
-
-        .connection-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--danger);
-        }
-
-        .status-dot.connected {
-            background: var(--success);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .card-content {
-            padding: 30px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .panel {
-            background: var(--light);
-            border-radius: 10px;
-            padding: 25px;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .panel:hover {
-            border-color: var(--primary);
-        }
-
-        .panel-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            color: var(--dark);
-            font-size: 1.2rem;
-        }
-
-        .panel-title i {
-            font-size: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #495057;
-        }
-
-        select, input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #dee2e6;
+        
+        /* Warning Banner */
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        select:focus, input[type="file"]:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .button:hover:not(:disabled) {
-            background: #0056b3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
-        }
-
-        .button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .button.success {
-            background: var(--success);
-        }
-
-        .button.danger {
-            background: var(--danger);
-        }
-
-        .button.warning {
-            background: var(--warning);
-            color: var(--dark);
-        }
-
-        .progress-container {
-            margin-top: 20px;
-        }
-
-        .progress-bar {
-            height: 20px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #00d2ff);
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 10px;
-        }
-
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        .console {
-            background: #212529;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            padding: 20px;
-            border-radius: 8px;
-            height: 300px;
-            overflow-y: auto;
-            margin-top: 20px;
-            white-space: pre-wrap;
-            font-size: 0.9rem;
-        }
-
-        .console-line {
-            margin-bottom: 5px;
-        }
-
-        .console-line.error {
-            color: #ff6b6b;
-        }
-
-        .console-line.success {
-            color: #51cf66;
-        }
-
-        .console-line.warning {
-            color: #ffd43b;
-        }
-
-        .instruction-box {
-            background: #e7f5ff;
-            border-left: 4px solid var(--primary);
             padding: 15px;
-            margin: 20px 0;
-            border-radius: 0 8px 8px 0;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
         }
-
-        .instruction-box h4 {
-            color: var(--primary);
-            margin-bottom: 10px;
+        
+        .dark-mode .warning {
+            background-color: #332701;
+            border-color: #665200;
         }
-
-        .instruction-box ol {
-            margin-left: 20px;
+        
+        .warning-icon {
+            color: #f39c12;
+            font-size: 1.2rem;
+            flex-shrink: 0;
         }
-
-        .instruction-box li {
-            margin-bottom: 8px;
+        
+        /* Device Selection */
+        .device-selection {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
-        .chip-selection {
+        
+        .dark-mode .device-selection {
+            background: #2d2d2d;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .dark-mode h2 {
+            color: #64b5f6;
+        }
+        
+        .device-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
-
-        .chip-option {
-            border: 2px solid #dee2e6;
+        
+        .device-option {
+            position: relative;
+        }
+        
+        .device-radio {
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .device-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 15px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
             border-radius: 10px;
-            padding: 20px;
-            text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-align: center;
         }
-
-        .chip-option:hover {
-            border-color: var(--primary);
-            transform: translateY(-3px);
+        
+        .dark-mode .device-label {
+            background: #3a3a3a;
+            border-color: #555;
         }
-
-        .chip-option.selected {
-            border-color: var(--primary);
-            background: #e7f5ff;
+        
+        .device-radio:checked + .device-label {
+            border-color: #3498db;
+            background: #e3f2fd;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
-
-        .chip-option i {
+        
+        .dark-mode .device-radio:checked + .device-label {
+            border-color: #64b5f6;
+            background: #1e3a5f;
+        }
+        
+        .device-icon {
             font-size: 2rem;
-            color: var(--primary);
             margin-bottom: 10px;
+            color: #7f8c8d;
         }
-
-        .chip-info {
-            display: none;
+        
+        .device-radio:checked + .device-label .device-icon {
+            color: #3498db;
+        }
+        
+        .dark-mode .device-radio:checked + .device-label .device-icon {
+            color: #64b5f6;
+        }
+        
+        /* Install Button Area */
+        .install-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode .install-section {
+            background: #2d2d2d;
+        }
+        
+        .requirements {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        .dark-mode .requirements {
+            background: #3a3a3a;
+        }
+        
+        .requirements ul {
+            list-style-position: inside;
+            padding-left: 10px;
+        }
+        
+        .requirements li {
+            margin-bottom: 8px;
+        }
+        
+        esp-web-install-button {
+            --esp-tools-button-color: #3498db;
+            --esp-tools-text-color: white;
+            --esp-tools-border-radius: 8px;
+            --esp-tools-padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        /* Instructions */
+        .instructions {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode .instructions {
+            background: #2d2d2d;
+        }
+        
+        .steps {
+            counter-reset: step-counter;
             margin-top: 20px;
-            border: 1px solid #dee2e6;
         }
-
-        .chip-info.active {
-            display: block;
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            padding-left: 40px;
+            position: relative;
         }
-
+        
+        .step:before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .dark-mode .step:before {
+            background: #64b5f6;
+        }
+        
+        /* Footer */
         footer {
             text-align: center;
-            color: white;
-            padding: 20px;
-            font-size: 0.9rem;
-            opacity: 0.8;
+            padding-top: 30px;
+            border-top: 1px solid #ddd;
+            margin-top: 40px;
+            color: #7f8c8d;
         }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: help;
-            margin-left: 5px;
+        
+        .dark-mode footer {
+            border-top-color: #444;
         }
-
-        .tooltip-text {
-            visibility: hidden;
-            width: 200px;
-            background: var(--dark);
-            color: white;
-            text-align: center;
-            padding: 10px;
-            border-radius: 6px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.8rem;
-            font-weight: normal;
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
         }
-
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
+        
+        .footer-links a {
+            color: #3498db;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
         }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
+        
+        .dark-mode .footer-links a {
+            color: #64b5f6;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        
+        .footer-links a:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .dark-mode .footer-links a:hover {
+            background-color: rgba(100, 181, 246, 0.1);
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .device-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .device-label {
+                padding: 15px 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .device-selection,
+            .install-section,
+            .instructions {
+                padding: 20px 15px;
+            }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="logo">
-                <div class="chip-icon">
-                    <i class="fas fa-microchip"></i>
-                </div>
-                <h1>Web ESP Flasher</h1>
-            </div>
-            <p class="subtitle">Firmware Installer for ESP32 & ESP8266 via Web Serial API</p>
+            <h1>Squeezelite-ESP32 Web Flasher</h1>
+            <p class="subtitle">Easily install firmware on your Squeezelite-ESP32 devices directly from your browser</p>
         </header>
 
-        <div class="main-card">
-            <div class="card-header">
-                <h2><i class="fas fa-bolt"></i> ESP Flasher</h2>
-                <div class="connection-status">
-                    <div class="status-dot" id="statusDot"></div>
-                    <span id="statusText">Disconnected</span>
-                </div>
-            </div>
-
-            <div class="card-content">
-                <div class="grid">
-                    <div class="panel">
-                        <h3 class="panel-title">
-                            <i class="fas fa-cog"></i>
-                            Configuration
-                        </h3>
-
-                        <div class="chip-selection">
-                            <div class="chip-option" data-chip="esp32" onclick="selectChip('esp32')">
-                                <i class="fas fa-microchip"></i>
-                                <h4>ESP32</h4>
-                                <small>Dual-core, WiFi/BT</small>
-                            </div>
-                            <div class="chip-option" data-chip="esp8266" onclick="selectChip('esp8266')">
-                                <i class="fas fa-microchip"></i>
-                                <h4>ESP8266</h4>
-                                <small>WiFi SOC</small>
-                            </div>
-                        </div>
-
-                        <div id="chipInfo" class="chip-info">
-                            <h4 id="chipName">ESP32</h4>
-                            <p id="chipDescription">ESP32 is a series of low-cost, low-power system on a chip microcontrollers with integrated Wi-Fi and dual-mode Bluetooth.</p>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="flashMode">
-                                Flash Mode
-                                <span class="tooltip">
-                                    <i class="fas fa-question-circle"></i>
-                                    <span class="tooltip-text">QIO: Default for most boards<br>DIO: For some ESP8266 boards<br>QOUT: Quad Output mode<br>DOUT: Dual Output mode</span>
-                                </span>
-                            </label>
-                            <select id="flashMode">
-                                <option value="qio">QIO (Default)</option>
-                                <option value="dio">DIO</option>
-                                <option value="qout">QOUT</option>
-                                <option value="dout">DOUT</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="flashSize">
-                                Flash Size
-                                <span class="tooltip">
-                                    <i class="fas fa-question-circle"></i>
-                                    <span class="tooltip-text">Select according to your board's flash memory size</span>
-                                </span>
-                            </label>
-                            <select id="flashSize">
-                                <option value="4MB">4MB (32Mb)</option>
-                                <option value="8MB">8MB (64Mb)</option>
-                                <option value="16MB">16MB (128Mb)</option>
-                                <option value="32MB">32MB (256Mb)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="uploadSpeed">
-                                Upload Speed
-                                <span class="tooltip">
-                                    <i class="fas fa-question-circle"></i>
-                                    <span class="tooltip-text">Higher speeds are faster but less stable. 921600 is recommended for USB 2.0+</span>
-                                </span>
-                            </label>
-                            <select id="uploadSpeed">
-                                <option value="115200">115200 baud</option>
-                                <option value="230400">230400 baud</option>
-                                <option value="460800">460800 baud</option>
-                                <option value="921600" selected>921600 baud</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="firmwareFile">
-                                Firmware File (.bin)
-                                <span class="tooltip">
-                                    <i class="fas fa-question-circle"></i>
-                                    <span class="tooltip-text">Select the firmware .bin file to flash. For AI-on-the-edge-device, use the provided .bin file</span>
-                                </span>
-                            </label>
-                            <input type="file" id="firmwareFile" accept=".bin">
-                            <small style="display: block; margin-top: 5px; color: #6c757d;">Max file size: 16MB</small>
-                        </div>
-
-                        <button class="button" id="connectBtn" onclick="connectSerial()">
-                            <i class="fas fa-plug"></i>
-                            Connect ESP Device
-                        </button>
-
-                        <button class="button success" id="flashBtn" onclick="startFlashing()" disabled>
-                            <i class="fas fa-bolt"></i>
-                            Flash Firmware
-                        </button>
-
-                        <button class="button warning" id="eraseBtn" onclick="eraseFlash()" disabled>
-                            <i class="fas fa-eraser"></i>
-                            Erase Flash
-                        </button>
-                    </div>
-
-                    <div class="panel">
-                        <h3 class="panel-title">
-                            <i class="fas fa-terminal"></i>
-                            Console & Progress
-                        </h3>
-
-                        <div class="instruction-box">
-                            <h4><i class="fas fa-info-circle"></i> How to flash:</h4>
-                            <ol>
-                                <li>Connect ESP board to computer via USB</li>
-                                <li>Click "Connect ESP Device" and select the serial port</li>
-                                <li>Put ESP into bootloader mode:
-                                    <ul style="margin-left: 20px; margin-top: 5px;">
-                                        <li><strong>ESP32:</strong> Hold BOOT button, press RESET, release RESET, then release BOOT</li>
-                                        <li><strong>ESP8266:</strong> Hold FLASH/GPIO0, press RESET, release RESET, then release FLASH</li>
-                                    </ul>
-                                </li>
-                                <li>Select firmware file and configuration options</li>
-                                <li>Click "Flash Firmware"</li>
-                            </ol>
-                        </div>
-
-                        <div class="progress-container">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="progressFill"></div>
-                            </div>
-                            <div class="progress-text">
-                                <span id="progressText">0%</span>
-                                <span id="statusDetail">Ready</span>
-                            </div>
-                        </div>
-
-                        <div class="console" id="console">
-                            <div class="console-line">Web ESP Flasher v1.0</div>
-                            <div class="console-line">Waiting for connection...</div>
-                            <div class="console-line">Supported browsers: Chrome/Edge 89+</div>
-                        </div>
-
-                        <div style="margin-top: 20px; display: flex; gap: 10px;">
-                            <button class="button" onclick="clearConsole()">
-                                <i class="fas fa-trash"></i>
-                                Clear Console
-                            </button>
-                            <button class="button" onclick="copyConsole()">
-                                <i class="fas fa-copy"></i>
-                                Copy Log
-                            </button>
-                            <button class="button danger" onclick="resetFlasher()">
-                                <i class="fas fa-redo"></i>
-                                Reset
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="instruction-box" style="margin-top: 30px;">
-                    <h4><i class="fas fa-exclamation-triangle"></i> For AI-on-the-edge-device:</h4>
-                    <p>This tool is compatible with AI-on-the-edge-device firmware. After flashing:</p>
-                    <ul style="margin-left: 20px; margin-top: 10px;">
-                        <li>SD card must be FAT32 formatted</li>
-                        <li>First boot may take longer as filesystem is initialized</li>
-                        <li>Access device via network at the IP shown in serial console</li>
-                    </ul>
-                </div>
+        <div class="warning">
+            <div class="warning-icon">⚠</div>
+            <div>
+                <strong>Important:</strong> This tool will overwrite your device's existing firmware. 
+                Make sure to backup any important data before proceeding. 
+                The flashing process may take a few minutes.
             </div>
         </div>
 
+        <section class="device-selection">
+            <h2>Select Your Device</h2>
+            <p>Choose the type of device you want to flash:</p>
+            
+            <div class="device-grid">
+                <!-- I2S Device -->
+                <div class="device-option">
+                    <input type="radio" name="device-type" id="i2s" value="i2s" class="device-radio">
+                    <label for="i2s" class="device-label">
+                        <div class="device-icon">🔊</div>
+                        <div class="device-name">I2S</div>
+                        <div class="device-description">Generic I2S audio device</div>
+                    </label>
+                </div>
+                
+                <!-- Muse Device -->
+                <div class="device-option">
+                    <input type="radio" name="device-type" id="muse" value="muse" class="device-radio">
+                    <label for="muse" class="device-label">
+                        <div class="device-icon">🎵</div>
+                        <div class="device-name">Muse</div>
+                        <div class="device-description">Muse audio player</div>
+                    </label>
+                </div>
+                
+                <!-- Muse Proto -->
+                <div class="device-option">
+                    <input type="radio" name="device-type" id="muse_proto" value="muse_proto" class="device-radio">
+                    <label for="muse_proto" class="device-label">
+                        <div class="device-icon">🔬</div>
+                        <div class="device-name">Muse Proto</div>
+                        <div class="device-description">Muse prototype version</div>
+                    </label>
+                </div>
+                
+                <!-- SqueezeAmp -->
+                <div class="device-option">
+                    <input type="radio" name="device-type" id="squeezeamp" value="squeezeamp" class="device-radio">
+                    <label for="squeezeamp" class="device-label">
+                        <div class="device-icon">⚡</div>
+                        <div class="device-name">SqueezeAmp</div>
+                        <div class="device-description">SqueezeAmp device</div>
+                    </label>
+                </div>
+            </div>
+            
+            <p class="device-hint"><small>Select a device type to enable the installer</small></p>
+        </section>
+
+        <section class="install-section hidden" id="install-section">
+            <h2>Install Firmware</h2>
+            
+            <div class="requirements">
+                <p><strong>Before you begin:</strong></p>
+                <ul>
+                    <li>Connect your device via USB</li>
+                    <li>Make sure the device is in flashing mode (usually by holding BOOT button while connecting)</li>
+                    <li>Use Chrome/Edge or Firefox browsers</li>
+                    <li>Keep the page open during the process</li>
+                </ul>
+            </div>
+            
+            <esp-web-install-button id="install-button" class="hidden"></esp-web-install-button>
+            
+            <div id="waiting-message" class="hidden">
+                <p>Please select a device type above to enable the installer.</p>
+            </div>
+        </section>
+
+        <section class="instructions">
+            <h2>Installation Instructions</h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-content">
+                        <h3>Prepare Your Device</h3>
+                        <p>Put your ESP32 device into flashing mode. Typically this involves:</p>
+                        <ul>
+                            <li>Disconnect USB cable</li>
+                            <li>Hold the BOOT/FLASH button</li>
+                            <li>Connect USB cable while holding the button</li>
+                            <li>Release the button after connection</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-content">
+                        <h3>Select Device Type</h3>
+                        <p>Choose your device from the options above. The correct firmware will be loaded automatically.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-content">
+                        <h3>Install Firmware</h3>
+                        <p>Click the "Install" button and select your ESP32 device from the browser's USB device list.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-content">
+                        <h3>Wait for Completion</h3>
+                        <p>The installation process will take a few minutes. Do not disconnect the device during this time.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <footer>
-            <p>Web ESP Flasher &copy; 2024 | Based on ESP Web Tools | Supports Web Serial API</p>
-            <p>Not affiliated with Espressif Systems. Use at your own risk.</p>
+            <div class="footer-links">
+                <a href="https://github.com/sle118/squeezelite-esp32" target="_blank">Squeezelite-ESP32</a>
+                <a href="https://esphome.github.io/esp-web-tools/" target="_blank">ESP Web Tools</a>
+                <a href="https://github.com/sle118/squeezelite-esp32/issues" target="_blank">Report Issues</a>
+                <a href="#" id="theme-toggle">Toggle Dark Mode</a>
+            </div>
+            <p>© 2024 Squeezelite-ESP32 Web Flasher | Powered by ESP Web Tools</p>
         </footer>
     </div>
 
+    <!-- Manifest files for different device types -->
+    <script id="manifest-i2s" type="application/json">
+        {
+            "name": "Squeezelite-ESP32 for I2S",
+            "version": "1.1023",
+            "home_assistant_domain": "slim_player",
+            "funding_url": "https://esphome.io/guides/supporters.html",
+            "builds": [
+                {
+                    "chipFamily": "ESP32",
+                    "parts": [
+                        { "path": "firmware/bootloader.bin", "offset": 4096 },
+                        { "path": "firmware/partition-table.bin", "offset": 32768 },
+                        { "path": "firmware/ota_data_initial.bin", "offset": 53248 },
+                        { "path": "firmware/recovery.bin", "offset": 65536 },
+                        { "path": "firmware/i2s.bin", "offset": 1376256 }
+                    ]
+                }
+            ]
+        }
+    </script>
+
+    <script id="manifest-muse" type="application/json">
+        {
+            "name": "Squeezelite-ESP32 for Muse",
+            "version": "1.1023",
+            "home_assistant_domain": "slim_player",
+            "builds": [
+                {
+                    "chipFamily": "ESP32",
+                    "parts": [
+                        { "path": "firmware/bootloader.bin", "offset": 4096 },
+                        { "path": "firmware/partition-table.bin", "offset": 32768 },
+                        { "path": "firmware/ota_data_initial.bin", "offset": 53248 },
+                        { "path": "firmware/recovery.bin", "offset": 65536 },
+                        { "path": "firmware/muse.bin", "offset": 1376256 }
+                    ]
+                }
+            ]
+        }
+    </script>
+
+    <script id="manifest-muse_proto" type="application/json">
+        {
+            "name": "Squeezelite-ESP32 for Muse Proto",
+            "version": "1.1023",
+            "builds": [
+                {
+                    "chipFamily": "ESP32",
+                    "parts": [
+                        { "path": "firmware/bootloader.bin", "offset": 4096 },
+                        { "path": "firmware/partition-table.bin", "offset": 32768 },
+                        { "path": "firmware/ota_data_initial.bin", "offset": 53248 },
+                        { "path": "firmware/recovery.bin", "offset": 65536 },
+                        { "path": "firmware/muse_proto.bin", "offset": 1376256 }
+                    ]
+                }
+            ]
+        }
+    </script>
+
+    <script id="manifest-squeezeamp" type="application/json">
+        {
+            "name": "Squeezelite-ESP32 for SqueezeAmp",
+            "version": "1.1023",
+            "builds": [
+                {
+                    "chipFamily": "ESP32",
+                    "parts": [
+                        { "path": "firmware/bootloader.bin", "offset": 4096 },
+                        { "path": "firmware/partition-table.bin", "offset": 32768 },
+                        { "path": "firmware/ota_data_initial.bin", "offset": 53248 },
+                        { "path": "firmware/recovery.bin", "offset": 65536 },
+                        { "path": "firmware/squeezeamp.bin", "offset": 1376256 }
+                    ]
+                }
+            ]
+        }
+    </script>
+
     <script>
-        // Global variables
-        let selectedChip = 'esp32';
-        let port = null;
-        let isConnected = false;
-        let isFlashing = false;
-        let firmwareData = null;
-
-        // DOM Elements
-        const statusDot = document.getElementById('statusDot');
-        const statusText = document.getElementById('statusText');
-        const statusDetail = document.getElementById('statusDetail');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        const consoleElement = document.getElementById('console');
-        const connectBtn = document.getElementById('connectBtn');
-        const flashBtn = document.getElementById('flashBtn');
-        const eraseBtn = document.getElementById('eraseBtn');
-
-        // Chip information
-        const chipInfo = {
-            esp32: {
-                name: 'ESP32',
-                description: 'ESP32 is a series of low-cost, low-power system on a chip microcontrollers with integrated Wi-Fi and dual-mode Bluetooth.',
-                flashSizes: ['4MB', '8MB', '16MB', '32MB'],
-                defaultSpeed: 921600
-            },
-            esp8266: {
-                name: 'ESP8266',
-                description: 'ESP8266 is a low-cost Wi-Fi microchip with full TCP/IP stack and microcontroller capability.',
-                flashSizes: ['1MB', '2MB', '4MB', '8MB', '16MB'],
-                defaultSpeed: 115200
-            }
-        };
-
-        function selectChip(chip) {
-            selectedChip = chip;
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const deviceRadios = document.querySelectorAll('input[name="device-type"]');
+            const installButton = document.getElementById('install-button');
+            const installSection = document.getElementById('install-section');
+            const waitingMessage = document.getElementById('waiting-message');
+            const themeToggle = document.getElementById('theme-toggle');
             
-            // Update UI
-            document.querySelectorAll('.chip-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            document.querySelector(`.chip-option[data-chip="${chip}"]`).classList.add('selected');
-            
-            // Update chip info
-            document.getElementById('chipInfo').classList.add('active');
-            document.getElementById('chipName').textContent = chipInfo[chip].name;
-            document.getElementById('chipDescription').textContent = chipInfo[chip].description;
-            
-            // Update flash size options
-            const flashSizeSelect = document.getElementById('flashSize');
-            flashSizeSelect.innerHTML = '';
-            chipInfo[chip].flashSizes.forEach(size => {
-                const option = document.createElement('option');
-                option.value = size;
-                option.textContent = size;
-                if (size === '4MB') option.selected = true;
-                flashSizeSelect.appendChild(option);
+            // Theme Toggle
+            themeToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
             });
             
-            // Update default speed
-            document.getElementById('uploadSpeed').value = chipInfo[chip].defaultSpeed;
-            
-            logConsole(`Selected chip: ${chipInfo[chip].name}`, 'info');
-        }
-
-        function logConsole(message, type = 'info') {
-            const line = document.createElement('div');
-            line.className = `console-line ${type}`;
-            
-            const timestamp = new Date().toLocaleTimeString();
-            line.textContent = `[${timestamp}] ${message}`;
-            
-            consoleElement.appendChild(line);
-            consoleElement.scrollTop = consoleElement.scrollHeight;
-            
-            // Also log to browser console
-            console.log(`[ESP-Flasher] ${message}`);
-        }
-
-        function updateProgress(percent, detail = '') {
-            percent = Math.max(0, Math.min(100, percent));
-            progressFill.style.width = `${percent}%`;
-            progressText.textContent = `${Math.round(percent)}%`;
-            if (detail) statusDetail.textContent = detail;
-        }
-
-        function updateConnectionStatus(connected) {
-            isConnected = connected;
-            statusDot.classList.toggle('connected', connected);
-            statusText.textContent = connected ? 'Connected' : 'Disconnected';
-            flashBtn.disabled = !connected || isFlashing;
-            eraseBtn.disabled = !connected || isFlashing;
-            connectBtn.innerHTML = connected ? 
-                '<i class="fas fa-plug"></i> Disconnect' : 
-                '<i class="fas fa-plug"></i> Connect ESP Device';
-            
-            if (connected) {
-                logConsole('Device connected successfully', 'success');
-            } else {
-                logConsole('Device disconnected', 'warning');
+            // Check saved theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
             }
-        }
-
-        async function connectSerial() {
-            if (isConnected && port) {
-                try {
-                    await port.close();
-                    port = null;
-                    updateConnectionStatus(false);
-                } catch (err) {
-                    logConsole(`Error disconnecting: ${err.message}`, 'error');
+            
+            // Device selection handler
+            deviceRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        const deviceType = this.value;
+                        const manifestElement = document.getElementById(`manifest-${deviceType}`);
+                        
+                        if (manifestElement) {
+                            try {
+                                const manifest = JSON.parse(manifestElement.textContent);
+                                installButton.manifest = manifest;
+                                
+                                // Show install section and button
+                                installSection.classList.remove('hidden');
+                                installButton.classList.remove('hidden');
+                                waitingMessage.classList.add('hidden');
+                            } catch (error) {
+                                console.error('Error parsing manifest:', error);
+                                alert('Error loading firmware manifest. Please try again.');
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Install button event listeners
+            installButton.addEventListener('state-changed', (event) => {
+                const newState = event.detail;
+                console.log('Installation state:', newState);
+                
+                // You can add custom UI updates based on installation state
+                switch (newState) {
+                    case 'ready':
+                        console.log('Ready to install');
+                        break;
+                    case 'installing':
+                        console.log('Installation in progress...');
+                        break;
+                    case 'installed':
+                        console.log('Installation completed successfully');
+                        alert('Firmware installed successfully! Your device will now reboot.');
+                        break;
+                    case 'error':
+                        console.log('Installation failed');
+                        break;
                 }
-                return;
-            }
-
-            if (!('serial' in navigator)) {
-                alert('Web Serial API is not supported in this browser. Please use Chrome/Edge 89 or later.');
-                logConsole('Web Serial API not supported', 'error');
-                return;
-            }
-
-            try {
-                port = await navigator.serial.requestPort();
-                logConsole('Port selected, opening...', 'info');
-                
-                const baudRate = parseInt(document.getElementById('uploadSpeed').value);
-                await port.open({ baudRate: 115200 }); // Open with default baud for detection
-                
-                logConsole(`Serial port opened at ${baudRate} baud`, 'success');
-                updateConnectionStatus(true);
-                
-                // Test communication
-                await testConnection();
-                
-            } catch (err) {
-                logConsole(`Connection error: ${err.message}`, 'error');
-                updateConnectionStatus(false);
-            }
-        }
-
-        async function testConnection() {
-            try {
-                logConsole('Testing connection...', 'info');
-                
-                // Send test command (AT for ESP8266, or custom for ESP32)
-                const writer = port.writable.getWriter();
-                const encoder = new TextEncoder();
-                
-                // Send newline to trigger any bootloader prompt
-                await writer.write(encoder.encode('\n'));
-                
-                // Add a small delay
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                writer.releaseLock();
-                
-                logConsole('Connection test complete', 'success');
-                
-            } catch (err) {
-                logConsole(`Test failed: ${err.message}`, 'error');
-            }
-        }
-
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (!file.name.endsWith('.bin')) {
-                alert('Please select a .bin firmware file');
-                return;
-            }
-            
-            if (file.size > 16 * 1024 * 1024) {
-                alert('File size too large. Maximum 16MB allowed.');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                firmwareData = new Uint8Array(e.target.result);
-                logConsole(`Loaded firmware: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`, 'success');
-                updateProgress(0, 'Firmware loaded');
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        async function startFlashing() {
-            if (!firmwareData) {
-                alert('Please select a firmware file first');
-                return;
-            }
-            
-            if (!isConnected) {
-                alert('Please connect to ESP device first');
-                return;
-            }
-            
-            if (isFlashing) {
-                alert('Flash operation already in progress');
-                return;
-            }
-            
-            // Confirmation
-            if (!confirm(`Flash ${selectedChip.toUpperCase()} with selected firmware?`)) {
-                return;
-            }
-            
-            isFlashing = true;
-            flashBtn.disabled = true;
-            flashBtn.innerHTML = '<span class="spinner"></span> Flashing...';
-            
-            try {
-                logConsole('Starting flash process...', 'info');
-                updateProgress(5, 'Initializing');
-                
-                // Put device into bootloader mode
-                logConsole('Putting device into bootloader mode...', 'info');
-                await putIntoBootloader();
-                
-                // Close and reopen port with flashing baud rate
-                await port.close();
-                const flashBaudRate = parseInt(document.getElementById('uploadSpeed').value);
-                await port.open({ baudRate: flashBaudRate });
-                logConsole(`Reopened at flash baud rate: ${flashBaudRate}`, 'info');
-                
-                // Simulate flashing process (in real implementation, use esptool.js)
-                await simulateFlashing();
-                
-                // Complete
-                updateProgress(100, 'Flash complete!');
-                logConsole('Firmware flash completed successfully!', 'success');
-                logConsole('Please reset your device to run new firmware', 'warning');
-                
-            } catch (err) {
-                logConsole(`Flash failed: ${err.message}`, 'error');
-                updateProgress(0, 'Flash failed');
-            } finally {
-                isFlashing = false;
-                flashBtn.disabled = !isConnected;
-                flashBtn.innerHTML = '<i class="fas fa-bolt"></i> Flash Firmware';
-            }
-        }
-
-        async function putIntoBootloader() {
-            logConsole('Manual bootloader mode required:', 'warning');
-            logConsole(`For ${selectedChip.toUpperCase()}:`, 'warning');
-            
-            if (selectedChip === 'esp32') {
-                logConsole('1. Hold BOOT button', 'warning');
-                logConsole('2. Press and release RESET button', 'warning');
-                logConsole('3. Release BOOT button', 'warning');
-            } else {
-                logConsole('1. Hold FLASH/GPIO0 button', 'warning');
-                logConsole('2. Press and release RESET button', 'warning');
-                logConsole('3. Release FLASH button', 'warning');
-            }
-            
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    logConsole('Assuming device in bootloader mode...', 'info');
-                    resolve();
-                }, 3000); // Give user time to follow instructions
             });
-        }
-
-        async function simulateFlashing() {
-            // Simulate the flashing process with progress updates
-            const steps = [
-                { progress: 10, message: 'Connecting to bootloader...' },
-                { progress: 20, message: 'Reading chip info...' },
-                { progress: 30, message: 'Erasing flash...' },
-                { progress: 40, message: 'Writing firmware...' },
-                { progress: 60, message: 'Verifying...' },
-                { progress: 80, message: 'Finishing...' }
-            ];
             
-            for (const step of steps) {
-                updateProgress(step.progress, step.message);
-                logConsole(step.message, 'info');
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
-            }
-        }
-
-        async function eraseFlash() {
-            if (!confirm('Erase entire flash memory? This will delete all data!')) {
-                return;
-            }
+            // Initialize
+            console.log('Squeezelite-ESP32 Web Flasher initialized');
             
-            if (!isConnected) {
-                alert('Please connect to ESP device first');
-                return;
-            }
-            
-            isFlashing = true;
-            eraseBtn.disabled = true;
-            eraseBtn.innerHTML = '<span class="spinner"></span> Erasing...';
-            
-            try {
-                logConsole('Starting flash erase...', 'info');
-                updateProgress(0, 'Erasing flash');
-                
-                await putIntoBootloader();
-                
-                // Simulate erase process
-                for (let i = 0; i <= 100; i += 10) {
-                    updateProgress(i, `Erasing sector ${i/10}`);
-                    logConsole(`Erasing sector ${i/10}...`, 'info');
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                }
-                
-                updateProgress(100, 'Erase complete!');
-                logConsole('Flash erase completed successfully', 'success');
-                
-            } catch (err) {
-                logConsole(`Erase failed: ${err.message}`, 'error');
-            } finally {
-                isFlashing = false;
-                eraseBtn.disabled = !isConnected;
-                eraseBtn.innerHTML = '<i class="fas fa-eraser"></i> Erase Flash';
-            }
-        }
-
-        function clearConsole() {
-            consoleElement.innerHTML = `
-                <div class="console-line">Web ESP Flasher v1.0</div>
-                <div class="console-line">Console cleared</div>
-            `;
-        }
-
-        function copyConsole() {
-            const text = consoleElement.textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                logConsole('Console log copied to clipboard', 'success');
-            }).catch(err => {
-                logConsole('Failed to copy: ' + err.message, 'error');
-            });
-        }
-
-        function resetFlasher() {
-            if (confirm('Reset flasher to initial state?')) {
-                firmwareData = null;
-                updateProgress(0, 'Ready');
-                clearConsole();
-                logConsole('Flasher reset', 'info');
-            }
-        }
-
-        // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
-            selectChip('esp32');
-            document.getElementById('firmwareFile').addEventListener('change', handleFileSelect);
-            logConsole('Web ESP Flasher initialized', 'success');
-            logConsole('Select chip type and firmware file to begin', 'info');
-        });
-
-        // Handle page unload
-        window.addEventListener('beforeunload', async () => {
-            if (port && isConnected) {
-                await port.close();
-            }
+            // Auto-select first device (optional)
+            // deviceRadios[0].checked = true;
+            // deviceRadios[0].dispatchEvent(new Event('change'));
         });
     </script>
 </body>
