@@ -2,7 +2,7 @@
   "name": "ThanhCongTED_CAMERA_AI",
   "builds": [
     {
-      "chipFamily": "ESP32CAM",
+      "chipFamily": "ESP32",
       "parts": [
         { "path": "./firmware.bin", "offset": 0 }
       ]
