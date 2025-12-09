@@ -2,13 +2,13 @@
   "name": "ESP32-CAM",
   "builds": [
     {
-      "chipFamily": "ESP32-D0WD",  // Thử chính xác model
+      "chipFamily": "ESP32-D0WD",
       "parts": [
         { "path": "./firmware.bin", "offset": 0 }
       ]
     },
     {
-      "chipFamily": "ESP32",  // Dự phòng
+      "chipFamily": "ESP32",  
       "parts": [
         { "path": "./firmware.bin", "offset": 0 }
       ]
