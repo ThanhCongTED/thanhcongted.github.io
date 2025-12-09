@@ -2,14 +2,14 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Công Cụ Web cho Thiết Bị AI-on-the-edge</title>
+    <title>Công Cụ Cài Đặt Web cho Thiết Bị AI-on-the-edge</title>
     <meta
       name="description"
-      content="Cung cấp trình cài đặt web và giao diện console trực tiếp cho thiết bị AI-on-the-edge-device."
+      content="Trình cài đặt firmware web cho thiết bị AI-on-the-edge-device."
     />
     <meta name="viewport" content="width=device-width" />
 
-    <meta property="og:title" content="Công Cụ Web cho Thiết Bị AI-on-the-edge" />
+    <meta property="og:title" content="Cài Đặt Web AI-on-the-edge" />
     <meta property="og:site_name" content="AI-on-the-edge-device" />
     <meta
       property="og:url"
@@ -18,7 +18,7 @@
     <meta property="og:type" content="website" />
     <meta
       property="og:description"
-      content="Cung cấp trình cài đặt web và giao diện console trực tiếp cho thiết bị AI-on-the-edge-device."
+      content="Trình cài đặt firmware web cho thiết bị AI-on-the-edge-device."
     />
     <meta name="color-scheme" content="dark light" />
     <style>
@@ -31,68 +31,123 @@
         line-height: 1.4;
       }
       .content {
-        max-width: 600px;
+        max-width: 700px;
         margin: 0 auto;
-        padding: 12px;
+        padding: 20px;
+      }
+      h1 {
+        color: #007acc;
+        border-bottom: 2px solid #007acc;
+        padding-bottom: 10px;
       }
       h2 {
         margin-top: 2em;
+        color: #333;
       }
       h3 {
         margin-top: 1.5em;
+        color: #555;
       }
       a {
-        color: #03a9f4;
+        color: #007acc;
+        text-decoration: none;
       }
-      .hidden {
-        display: none;
-      }
-      .footer {
-        margin-top: 24px;
-        border-top: 1px solid #ccc;
-        padding-top: 24px;
-        text-align: center;
+      a:hover {
+        text-decoration: underline;
       }
       .note-box {
-        background-color: #fff3cd;
-        border: 1px solid #ffeaa7;
+        background-color: #e7f3ff;
+        border-left: 4px solid #007acc;
+        padding: 15px;
+        margin: 20px 0;
         border-radius: 4px;
-        padding: 12px;
-        margin: 16px 0;
       }
       .warning-box {
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
+        background-color: #fff3e0;
+        border-left: 4px solid #ff9800;
+        padding: 15px;
+        margin: 20px 0;
         border-radius: 4px;
-        padding: 12px;
-        margin: 16px 0;
       }
       .license-box {
-        background-color: #e8f4fd;
-        border: 1px solid #b6e0fe;
+        background-color: #f3e5f5;
+        border-left: 4px solid #9c27b0;
+        padding: 15px;
+        margin: 20px 0;
         border-radius: 4px;
-        padding: 12px;
-        margin: 16px 0;
+      }
+      .install-section {
+        text-align: center;
+        margin: 40px 0;
+        padding: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        color: white;
+      }
+      .install-section h2 {
+        color: white;
+        margin-top: 0;
+      }
+      .steps {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      .step {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+      }
+      .step-number {
+        background-color: #007acc;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+      .browser-support {
+        margin-top: 30px;
+        padding: 15px;
+        background-color: #f0f0f0;
+        border-radius: 8px;
       }
       @media (prefers-color-scheme: dark) {
         body {
-          background-color: #333;
-          color: #fff;
+          background-color: #1e1e1e;
+          color: #d4d4d4;
         }
-        a {
-          color: #58a6ff;
+        h1, h2, h3 {
+          color: #d4d4d4;
         }
         .note-box {
-          background-color: #332b00;
-          border-color: #665800;
+          background-color: #2d2d30;
+          border-left-color: #007acc;
         }
         .warning-box {
-          background-color: #331a1c;
-          border-color: #663438;
+          background-color: #2d2d30;
+          border-left-color: #ff9800;
         }
         .license-box {
-          background-color: #002733;
-          border-color: #004e66;
+          background-color: #2d2d30;
+          border-left-color: #9c27b0;
+        }
+        .steps {
+          background-color: #252526;
+        }
+        .browser-support {
+          background-color: #252526;
+        }
+        a {
+          color: #569cd6;
+        }
+        .install-section {
+          background: linear-gradient(135deg, #5a67d8 0%, #805ad5 100%);
         }
       }
     </style>
@@ -103,119 +158,131 @@
   </head>
   <body>
     <div class="content">
-      <h1>Công Cụ Web cho Thiết Bị AI-on-the-edge</h1>
+      <h1>Công Cụ Cài Đặt Web AI-on-the-edge</h1>
       <p>
-        Trang này cung cấp trình cài đặt web và giao diện console trực tiếp cho thiết bị AI-on-the-edge-device của bạn.
-        Để biết thêm thông tin về AI-on-the-edge-device, vui lòng truy cập <a href="https://github.com/jomjol/AI-on-the-edge-device">https://github.com/jomjol/AI-on-the-edge-device</a>.
+        Trang này cung cấp trình cài đặt firmware web cho thiết bị <strong>AI-on-the-edge-device</strong>.
+        Để biết thêm thông tin chi tiết, vui lòng truy cập 
+        <a href="https://github.com/jomjol/AI-on-the-edge-device" target="_blank">Git Repository chính thức</a>.
       </p>
 
+      <div class="install-section">
+        <h2>Cài Đặt Firmware</h2>
+        <p>Nhấn nút bên dưới để bắt đầu quá trình cài đặt firmware mới nhất.</p>
+        <esp-web-install-button manifest="manifest.json">
+          <button slot="activate" style="
+            background: white;
+            color: #764ba2;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+          ">
+            🔽 Cài Đặt Firmware v16.0.0
+          </button>
+        </esp-web-install-button>
+      </div>
+
+      <div class="steps">
+        <h3>📋 Hướng dẫn cài đặt từng bước:</h3>
+        
+        <div class="step">
+          <div class="step-number">1</div>
+          <div>
+            <strong>Chuẩn bị thiết bị:</strong>
+            <p>Đảm bảo thiết bị ESP32 đã được kết nối với máy tính qua cổng USB.</p>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">2</div>
+          <div>
+            <strong>Vào chế độ Bootloader:</strong>
+            <p>Giữ nút FLASH (hoặc kéo GPIO0 xuống GND) trong khi nhấn và nhả nút RESET.</p>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">3</div>
+          <div>
+            <strong>Cài đặt firmware:</strong>
+            <p>Nhấn nút "Cài Đặt Firmware" ở trên và chọn cổng COM của thiết bị.</p>
+          </div>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">4</div>
+          <div>
+            <strong>Hoàn tất:</strong>
+            <p>Chờ quá trình cài đặt hoàn thành và reset thiết bị nếu cần.</p>
+          </div>
+        </div>
+      </div>
+
       <div class="note-box">
-        <h3>Lưu ý quan trọng:</h3>
+        <h3>💡 Lưu ý quan trọng:</h3>
         <ul>
-          <li>Webinstall sẽ cài đặt firmware mới nhất (Phiên bản v16.0.0).</li>
-          <li>Để cài đặt, hãy đảm bảo chuyển ESP32 sang chế độ Bootloader bằng cách giữ nút FLASH trong khi nhả nút RESET. Nếu không có nút FLASH, bạn cần kéo chân GPIO0 xuống mức thấp!</li>
-          <li>Sau khi cài đặt, có thể cần reset thủ công!</li>
-          <li>Xin lưu ý rằng không phải tất cả trình duyệt web và hệ điều hành đều hỗ trợ quyền truy cập USB cần thiết cho trình cài đặt web này!</li>
-          <li>Kiểm tra tài liệu để biết thêm thông tin.</li>
+          <li>Trình cài đặt sẽ cài đặt firmware phiên bản <strong>v16.0.0</strong> (mới nhất).</li>
+          <li>Quá trình cài đặt có thể mất từ 30 giây đến 2 phút tùy vào kết nối USB.</li>
+          <li>Sau khi cài đặt thành công, thiết bị sẽ tự động khởi động lại.</li>
         </ul>
       </div>
 
       <div class="warning-box">
-        <h3>Cấu hình thẻ SD:</h3>
-        <p>Thẻ SD có thể được thiết lập tự động sau khi cài đặt firmware. Xem tài liệu để biết chi tiết. Để tính năng này hoạt động, thẻ SD phải được định dạng FAT (đây là định dạng mặc định trên thẻ SD mới). Ngoài ra, thẻ SD vẫn có thể được thiết lập thủ công, xem tài liệu để biết chi tiết!</p>
+        <h3>⚠️ Cảnh báo về thẻ SD:</h3>
+        <p>
+          Thẻ SD cần được định dạng <strong>FAT32</strong> (định dạng mặc định trên thẻ mới).
+          Nếu sử dụng thẻ cũ, vui lòng format lại thẻ trước khi sử dụng.
+          Tham khảo tài liệu để biết hướng dẫn cấu hình thẻ SD thủ công.
+        </p>
       </div>
 
-      <h2>Trình Cài Đặt Firmware</h2>
-      <esp-web-install-button
-        manifest="manifest.json"
-      ></esp-web-install-button>
-
-      <h2>Console Trực Tiếp</h2>
-      <p>Kết nối với thiết bị của bạn thông qua cổng nối tiếp USB:</p>
-      <button id="connect-button" style="padding: 10px 20px; margin-bottom: 20px;">Kết nối Console</button>
-      <div id="console-output" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; background: #000; color: #0f0; font-family: monospace; display: none;"></div>
+      <div class="browser-support">
+        <h3>🌐 Hỗ trợ trình duyệt:</h3>
+        <p>
+          Trình cài đặt web này yêu cầu trình duyệt hỗ trợ <strong>Web Serial API</strong>.
+          <br>
+          <strong>Được hỗ trợ tốt:</strong> Chrome 89+, Edge 89+, Opera 76+
+          <br>
+          <strong>Không hỗ trợ:</strong> Firefox, Safari, các trình duyệt di động
+        </p>
+      </div>
 
       <div class="license-box">
-        <h3>Giấy phép:</h3>
-        <p>Dự án này được xuất bản dưới giấy phép cá nhân: <a href="#">License</a></p>
-        <p>Bằng cách sử dụng trình cài đặt web này, bạn đồng ý với giấy phép này. Đặc biệt, cần có thỏa thuận riêng với tác giả để sử dụng AI-on-the-Edge cho mục đích thương mại.</p>
+        <h3>📄 Thông tin giấy phép:</h3>
+        <p>
+          Dự án này được phân phối dưới giấy phép cá nhân. 
+          <a href="#" target="_blank">Xem chi tiết giấy phép tại đây</a>.
+        </p>
+        <p>
+          <strong>Lưu ý:</strong> Sử dụng trình cài đặt này đồng nghĩa với việc bạn chấp nhận điều khoản giấy phép.
+          Đối với mục đích thương mại, cần có thỏa thuận riêng với tác giả.
+        </p>
       </div>
     </div>
 
     <script>
       {
+        // Hiển thị cảnh báo nếu là thiết bị iOS
         if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-          document.querySelector(".not-supported-i").classList.remove("hidden");
+          const warning = document.createElement('div');
+          warning.className = 'warning-box';
+          warning.innerHTML = `
+            <h3>⚠️ Thiết bị iOS không được hỗ trợ</h3>
+            <p>Trình duyệt trên iOS không hỗ trợ Web Serial API. Vui lòng sử dụng máy tính với Chrome/Edge/Opera để cài đặt firmware.</p>
+          `;
+          document.querySelector('.content').prepend(warning);
         }
 
+        // Xử lý URL parameter cho manifest tùy chỉnh
         const search = new URLSearchParams(window.location.search);
         if (search.has("manifest")) {
           const button = document.querySelector("esp-web-install-button");
           button.manifest = search.get("manifest");
+          document.querySelector('.install-section h2').textContent = 'Cài Đặt Firmware Tùy Chỉnh';
         }
-
-        // Console functionality
-        let port;
-        let reader;
-        const connectButton = document.getElementById('connect-button');
-        const consoleOutput = document.getElementById('console-output');
-        
-        connectButton.addEventListener('click', async () => {
-          if (!('serial' in navigator)) {
-            alert('Trình duyệt của bạn không hỗ trợ Serial API. Vui lòng sử dụng Chrome/Edge 89+ hoặc Opera 76+');
-            return;
-          }
-          
-          try {
-            port = await navigator.serial.requestPort();
-            await port.open({ baudRate: 115200 });
-            
-            consoleOutput.style.display = 'block';
-            connectButton.textContent = 'Ngắt kết nối';
-            
-            // Read data from serial port
-            reader = port.readable.getReader();
-            while (true) {
-              const { value, done } = await reader.read();
-              if (done) {
-                reader.releaseLock();
-                break;
-              }
-              const text = new TextDecoder().decode(value);
-              consoleOutput.innerHTML += text;
-              consoleOutput.scrollTop = consoleOutput.scrollHeight;
-            }
-          } catch (err) {
-            console.error('Lỗi:', err);
-            if (err.name === 'NotFoundError') {
-              alert('Không tìm thấy thiết bị serial.');
-            }
-          }
-        });
-
-        // Disconnect function
-        const disconnectSerial = async () => {
-          if (reader) {
-            await reader.cancel();
-            reader.releaseLock();
-            reader = null;
-          }
-          if (port) {
-            await port.close();
-            port = null;
-          }
-          consoleOutput.style.display = 'none';
-          connectButton.textContent = 'Kết nối Console';
-        };
-
-        // Update disconnect logic
-        connectButton.addEventListener('click', async () => {
-          if (port && port.readable) {
-            await disconnectSerial();
-          } else {
-            await connectSerial();
-          }
-        });
       }
     </script>
   </body>
