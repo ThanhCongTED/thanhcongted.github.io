@@ -152,7 +152,14 @@
       }
     </style>
     
-    <script type="module" src="/src/install-button.js"></script>
+    <script module>
+      import(
+        // In development we import locally.
+        window.location.hostname === "localhost"
+          ? "/dist/web/install-button.js"
+          : "https://unpkg.com/esp-web-tools/dist/web/install-button.js?module"
+      );
+    </script>
 
   </head>
   <body>
