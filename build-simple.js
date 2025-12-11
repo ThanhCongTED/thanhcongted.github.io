@@ -178,7 +178,7 @@ if (!fs.existsSync('index.html')) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cài Đặt Web AI-on-the-edge</title>
+    <title>Cài Đặt CAMERA_AI Đồng hồ nước</title>
     <style>
         body {
             font-family: Arial, sans-serif;
